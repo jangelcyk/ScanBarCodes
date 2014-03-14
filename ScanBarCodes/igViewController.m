@@ -19,6 +19,8 @@
 
     UIView *_highlightView;
     UILabel *_label;
+    
+    NSMutableString *lastDetectedString;
 }
 @end
 
@@ -97,7 +99,9 @@
         if (detectionString != nil)
         {
             _label.text = detectionString;
-            NSLog(@"Detected : %@", detectionString);
+            [lastDetectedString setString:detectionString];
+            NSLog(@"Detected : %@", lastDetectedString);
+            AudioServicesPlaySystemSound(1103);
             break;
         }
         else
