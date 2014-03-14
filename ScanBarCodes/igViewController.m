@@ -97,7 +97,7 @@
         if (detectionString != nil)
         {
             _label.text = detectionString;
-            NSLog(@"Detected: %@", detectionString);
+            NSLog(@"Detected : %@", detectionString);
             break;
         }
         else
