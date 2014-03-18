@@ -100,9 +100,9 @@
 		9328CA3696F4E301F32EF824 = {
 			isa = PBXGroup;
 			children = (
+				9328CE10ED2B28FB39B8F5CF /* ScanBarCodes */,
 				9328C67978BEFE2EA166201F /* Products */,
 				9328CBF481AE1175F635C99D /* Frameworks */,
-				9328CE10ED2B28FB39B8F5CF /* ScanBarCodes */,
 			);
 			sourceTree = "<group>";
 		};

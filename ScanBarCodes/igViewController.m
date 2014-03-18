@@ -48,6 +48,8 @@
     _label.text = @"(none)";
     [self.view addSubview:_label];
 
+    lastDetectedString = [[NSMutableString alloc] init];
+    
     _session = [[AVCaptureSession alloc] init];
     _device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
     NSError *error = nil;
@@ -76,6 +78,11 @@
     [self.view bringSubviewToFront:_label];
 }
 
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [_session startRunning];
+}
+
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputMetadataObjects:(NSArray *)metadataObjects fromConnection:(AVCaptureConnection *)connection
 {
     CGRect highlightViewRect = CGRectZero;
@@ -95,14 +102,19 @@
                 break;
             }
         }
-
-        if (detectionString != nil)
+        
+        if (detectionString != nil )
         {
-            _label.text = detectionString;
-            [lastDetectedString setString:detectionString];
-            NSLog(@"Detected : %@", lastDetectedString);
-            AudioServicesPlaySystemSound(1103);
-            break;
+            if ([detectionString isEqualToString:lastDetectedString ] == NO)
+            {
+                _label.text = detectionString;
+                [lastDetectedString setString:detectionString];
+                NSLog(@"Detected : %@", detectionString);
+                NSLog(@"Detected : %@", lastDetectedString);
+                AudioServicesPlaySystemSound(1103);
+                [_session stopRunning];
+                break;
+            }
         }
         else
             _label.text = @"(none)";
