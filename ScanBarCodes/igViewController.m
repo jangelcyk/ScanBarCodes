@@ -9,6 +9,16 @@
 #import <AVFoundation/AVFoundation.h>
 #import "igViewController.h"
 
+
+//#define WORK
+
+#ifdef WORK
+#  define WEBSERVERURL @"http://172.16.2.117/phpsqltest.php?bc="
+#else
+#  define WEBSERVERURL @"http://192.168.1.220/phpsqltest.php?bc="
+#endif
+
+
 @interface igViewController () <AVCaptureMetadataOutputObjectsDelegate>
 {
     AVCaptureSession *_session;
@@ -113,6 +123,45 @@
                 NSLog(@"Detected : %@", lastDetectedString);
                 AudioServicesPlaySystemSound(1103);
                 [_session stopRunning];
+                
+
+                // Send a synchronous request
+                
+                NSString * url = [WEBSERVERURL stringByAppendingString:detectionString];
+                
+                NSLog(@"Attempting: %@", url);
+                
+                NSURLRequest * urlRequest = [NSURLRequest requestWithURL:
+                                             [NSURL URLWithString:url]];
+                NSURLResponse * response = nil;
+                NSError * error = nil;
+                NSData * data = [NSURLConnection sendSynchronousRequest:urlRequest
+                                                      returningResponse:&response
+                                                                  error:&error];
+                
+                if (error == nil)
+                {
+                    NSLog(@"got data: %@",
+                          [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding]);
+                    
+                    //parse out the json data
+                    NSError* error;
+                    NSDictionary* json = [NSJSONSerialization
+                                          JSONObjectWithData:data
+                                          options:kNilOptions
+                                          error:&error];
+                    
+                    NSLog(@"Dictionary: %@", [json description]);
+                    
+                    NSString* item_num = [json objectForKey:@"item_num"];
+                    
+                    NSLog(@"Item Num: %@", item_num);
+                    _label.text = item_num;
+                }
+                else
+                {
+                    NSLog(@"no data");
+                }
                 break;
             }
         }
